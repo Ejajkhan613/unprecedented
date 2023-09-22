@@ -23,9 +23,13 @@ const tokenVerify = async (req, res, next) => {
 
                 let userDetail = await UserModel.findById(decoded.userID);
 
-                if (userDetail && userDetail._id == id && userDetail.status) {
-                    req.userDetail = userDetail;
-                    next();
+                if (userDetail && userDetail._id == id) {
+                    if (userDetail.status) {
+                        req.userDetail = userDetail;
+                        next();
+                    } else {
+                        res.status(401).send({ "msg": "Access Blocked by Admin" });
+                    }
                 } else {
                     res.status(401).send({ "msg": "Unauthorized: User not found, login again" });
                 }

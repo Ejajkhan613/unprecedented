@@ -28,6 +28,48 @@ const secretKey = process.env.SECRET_KEY;
 userRoute.use(express.json());
 
 
+// Get User Details
+userRoute.get("/", tokenVerify, async (req, res) => {
+    try {
+        let data = req.userDetail;
+        let userData = {
+            name: data.name,
+            email: data.email,
+            mobile: data.mobile,
+            gender: data.gender,
+            date_of_birth: data.date_of_birth,
+            createdAt: data.createdAt,
+            last_updated: data.last_updated,
+            last_sign_in_at: data.last_sign_in_at
+        };
+        res.status(200).send(userData);
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ "error": "Internal Server Error" });
+    }
+})
+
+let obj = {
+    "_id": { "$oid": "650d6f6eb17e0aed1fd916ed" },
+    "email": "ejajkhan613@gmail.com",
+    "emailVerified": true,
+    "mobile": "9891640628",
+    "mobileVerified": false,
+    "password": "$2b$12$kOIIV7cKjRaqpsrwu7uD1.knm20J1ir628sBNykUGPXIzjzorotiK",
+    "role": "customer",
+    "wishlist": [],
+    "cart": [],
+    "status": true,
+    "addresses": [],
+    "createdAt": "Friday, 22 September, 2023 at 4:11:50 pm",
+    "last_updated": "Friday, 22 September, 2023 at 4:14:21 pm",
+    "last_sign_in_at": "Friday, 22 September, 2023 at 4:11:50 pm",
+    "__v": { "$numberInt": "0" },
+    "date_of_birth": "12-March-2000",
+    "gender": "Male",
+    "name": "Ejajul Ansari"
+}
+
 
 // OTP Sending
 userRoute.get("/sendEmailOTP/:email", async (req, res) => {
@@ -46,10 +88,8 @@ userRoute.get("/sendEmailOTP/:email", async (req, res) => {
             return res.status(400).send({ "error": "Failed to send OTP" });
         }
 
-        const hashedOTP = bcrypt.hashSync(emailStatus.otp, saltRounds);
-
         const filter = { "email": email };
-        const update = { "otp": hashedOTP, "createdAt": Date.now() };
+        const update = { "otp": emailStatus.otp, "createdAt": Date.now() };
 
         const result = await EmailOtpModel.findOneAndUpdate(filter, update, {
             upsert: true,
@@ -62,6 +102,7 @@ userRoute.get("/sendEmailOTP/:email", async (req, res) => {
             return res.status(500).send({ "error": "Failed to update new OTP" });
         }
     } catch (error) {
+        console.log(error)
         res.status(500).send({ "error": "Internal Server Error" });
     }
 });
@@ -95,9 +136,7 @@ userRoute.post("/verifyEmailOTP", async (req, res) => {
             return res.status(400).send({ "msg": "Invalid OTP" });
         }
 
-        let isOtpMatching = bcrypt.compareSync(otp, findInDB.otp);
-
-        if (isOtpMatching) {
+        if (findInDB.otp == otp) {
             let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
             let newUser = new UserModel({ email, "emailVerified": true, "mobile": "", "password": hashedPassword });
