@@ -49,27 +49,6 @@ userRoute.get("/", tokenVerify, async (req, res) => {
     }
 })
 
-let obj = {
-    "_id": { "$oid": "650d6f6eb17e0aed1fd916ed" },
-    "email": "ejajkhan613@gmail.com",
-    "emailVerified": true,
-    "mobile": "9891640628",
-    "mobileVerified": false,
-    "password": "$2b$12$kOIIV7cKjRaqpsrwu7uD1.knm20J1ir628sBNykUGPXIzjzorotiK",
-    "role": "customer",
-    "wishlist": [],
-    "cart": [],
-    "status": true,
-    "addresses": [],
-    "createdAt": "Friday, 22 September, 2023 at 4:11:50 pm",
-    "last_updated": "Friday, 22 September, 2023 at 4:14:21 pm",
-    "last_sign_in_at": "Friday, 22 September, 2023 at 4:11:50 pm",
-    "__v": { "$numberInt": "0" },
-    "date_of_birth": "12-March-2000",
-    "gender": "Male",
-    "name": "Ejajul Ansari"
-}
-
 
 // OTP Sending
 userRoute.get("/sendEmailOTP/:email", async (req, res) => {
